@@ -58,7 +58,7 @@ QuadNode* geraQuadtree(Img* pic, float minDetail)
     raiz->color[1] = 0;
     raiz->color[2] = 255;
 
-    drawRecursiveNodeTopRight(raiz, height, width, c);
+    drawRecursiveNode(raiz, height, width, c);
 
 #endif
     // Finalmente, retorna a raiz da árvore
@@ -153,6 +153,14 @@ void drawNode(QuadNode* n)
     // Nodos vazios não precisam ser desenhados... nem armazenados!
 }
 
+void drawRecursiveNode(QuadNode* node,int height, int width, int c)
+{
+    drawRecursiveNodeTopLeft(node, height, width, c);
+    drawRecursiveNodeTopRight(node, height, width, c);
+    drawRecursiveNodeBottomRight(node, height, width, c);
+    drawRecursiveNodeBottomLeft(node, height, width, c);
+}
+
 void drawRecursiveNodeTopLeft(QuadNode* node,int height, int width, int c)
 {
     if(c > 31) {
@@ -179,19 +187,57 @@ void drawRecursiveNodeTopRight(QuadNode* node,int height, int width, int c)
     }
     QuadNode* nw;
 
-    nw = newNode(getX(width, c), 0,width/pow(2,c),height/pow(2,c));
+    nw = newNode(getXRight(width, c), 0,width/pow(2,c),height/pow(2,c));
     nw->status = PARCIAL;
     nw->color[0] = 0;
     nw->color[1] = 0;
     nw->color[2] = 255;
 
-    node->NW = nw;
+    node->NE = nw;
 
     c++;
     drawRecursiveNodeTopRight(nw, height, width, c);
 }
 
-int getX(int begin, int depth)
+void drawRecursiveNodeBottomRight(QuadNode* node,int height, int width, int c)
+{
+    if(c > 11) {
+        return;
+    }
+    QuadNode* nw;
+
+    nw = newNode(getXRight(width, c), getXRight(width, c),width/pow(2,c),height/pow(2,c));
+    nw->status = PARCIAL;
+    nw->color[0] = 0;
+    nw->color[1] = 0;
+    nw->color[2] = 255;
+
+    node->SE = nw;
+
+    c++;
+    drawRecursiveNodeBottomRight(nw, height, width, c);
+}
+
+void drawRecursiveNodeBottomLeft(QuadNode* node,int height, int width, int c)
+{
+    if(c > 11) {
+        return;
+    }
+    QuadNode* nw;
+
+    nw = newNode(0, getXRight(width, c),width/pow(2,c),height/pow(2,c));
+    nw->status = PARCIAL;
+    nw->color[0] = 0;
+    nw->color[1] = 0;
+    nw->color[2] = 255;
+
+    node->SW = nw;
+
+    c++;
+    drawRecursiveNodeBottomLeft(nw, height, width, c);
+}
+
+int getXRight(int begin, int depth)
 {
     int total = 0;
     for(int i =1; i <= depth; i++) {

@@ -41,6 +41,9 @@ void writeNode(FILE* fp, QuadNode* n);
 void toggleBorder();
 void drawRecursiveNodeTopLeft(QuadNode* node,int height, int width,int c);
 void drawRecursiveNodeTopRight(QuadNode* node,int height, int width, int c);
-int getX(int begin, int depth);
+void drawRecursiveNodeBottomLeft(QuadNode* node,int height, int width, int c);
+void drawRecursiveNodeBottomRight(QuadNode* node,int height, int width, int c);
+void drawRecursiveNode(QuadNode* node,int height, int width, int c);
+int getXRight(int begin, int depth);
 
 #endif // QUADTREE_H
