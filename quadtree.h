@@ -6,6 +6,11 @@
 enum { CHEIO, PARCIAL };
 
 struct Quad {
+    // a a a a 
+    // b b a a 
+    // a a a a
+
+    // a a b b
     unsigned int id;
     float x, y;              // canto superior esquerdo da região
     float width, height;     // largura e altura da região
@@ -39,11 +44,5 @@ void drawNode(QuadNode* n);
 void writeTree(QuadNode* raiz);
 void writeNode(FILE* fp, QuadNode* n);
 void toggleBorder();
-void drawRecursiveNodeTopLeft(QuadNode* node,int height, int width,int c);
-void drawRecursiveNodeTopRight(QuadNode* node,int height, int width, int c);
-void drawRecursiveNodeBottomLeft(QuadNode* node,int height, int width, int c);
-void drawRecursiveNodeBottomRight(QuadNode* node,int height, int width, int c);
-void drawRecursiveNode(QuadNode* node,int height, int width, int c);
-int getXRight(int begin, int depth);
-
+QuadNode* drawRecursiveNode(int x, int y, int height, int width);
 #endif // QUADTREE_H

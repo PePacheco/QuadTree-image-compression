@@ -118,7 +118,7 @@ void keyboard(unsigned char key, int x, int y)
         if(raiz) // Se já tem uma árvore, limpa e refaz
             clearTree(raiz);
 
-        printf("Detalhe: %d\n", detalhe);
+        // printf("Detalhe: %d\n", detalhe);
 
         raiz = geraQuadtree(&pic, detalhe);
     }
