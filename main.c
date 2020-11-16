@@ -52,7 +52,6 @@ int main(int argc, char** argv)
 
     width = pic.width;
     height = pic.height;
-    //getDetailLevel(&pic, width, height);
 
     // Especifica o tamanho inicial em pixels da janela GLUT
     glutInitWindowSize(width, height);

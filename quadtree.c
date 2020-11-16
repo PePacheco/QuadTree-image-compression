@@ -42,16 +42,6 @@ QuadNode* geraQuadtree(Img* pic, float minDetail)
 
     QuadNode* raiz;
     raiz = drawRecursiveNode(0, 0, width, height, pic, minDetail);
-
-// #define DEMO
-// #ifdef DEMO
-
-//     /************************************************************/
-//     /* Teste: criando uma raiz e dois nodos a mais              */
-//     /************************************************************/
-
-// #endif
-    // Finalmente, retorna a raiz da árvore
     return raiz;
 }
 
@@ -148,25 +138,21 @@ QuadNode* drawRecursiveNode(int x, int y, int h, int w, Img* pic, float minDetai
     QuadNode* node = newNode(x, y, w, h);
     unsigned char difIntensity[4];
     getDifMeanIntensity(x, y, h, w, pic, difIntensity);
-    //unsigned char* difIntensity = getDifMeanIntensity(x, y, h, w, pic);
-    printf("Intensidade media: %d\n", difIntensity[3]);
-    // 1 - calcular cor media do bloco
-    // 2 - calcular nivel de detalhe
-    if(difIntensity[3] < minDetail){ // 3 - se nivel de detalhe é menor do que o valor desejado
-        node->status = PARCIAL; // 3.1 - se sim, cria e devolve o nodo total, com a cor media do bloco
+    if(difIntensity[3] < minDetail){
+        node->status = CHEIO;
         node->color[0] = difIntensity[0];
         node->color[1] = difIntensity[1];
         node->color[2] = difIntensity[2];
         return node;
     }
-    node->status = PARCIAL;// 3.2 - caso negativo, cria nodo parcial e preenche os 4 filhos dele com chamadas recursivas
+    node->status = PARCIAL;
     node->color[0] = difIntensity[0];
     node->color[1] = difIntensity[1];
     node->color[2] = difIntensity[2];
-    // node->NW = drawRecursiveNode(w/2, y, h/2, w/2, pic, minDetail);
-    // node->SE = drawRecursiveNode(x, h/2, h/2, w/2, pic, minDetail);
-    // node->SW = drawRecursiveNode(w/2, h/2, h/2, w/2, pic, minDetail);
-    node->NE = drawRecursiveNode(x, y, h/2, w/2, pic, minDetail);
+    node->NE = drawRecursiveNode(x + w/2, y, h/2, w/2, pic, minDetail);
+    node->NW = drawRecursiveNode(x, y, h/2, w/2, pic, minDetail);
+    node->SE = drawRecursiveNode(x + w/2, y + h/2, h/2, w/2, pic, minDetail);
+    node->SW = drawRecursiveNode(x, y + h/2, h/2, w/2, pic, minDetail);
     return node;
     
 }
@@ -176,8 +162,8 @@ void getDifMeanIntensity(int x, int y, int height, int width, Img* pic, unsigned
     int total = height*width;
     int totalR = 0, totalG = 0, totalB = 0;
     RGB (*pixels)[pic->width] = (RGB(*)[pic->width]) pic->img;
-    for(int h=0; h < height; h++){
-        for(int w = 0; w < width; w++) {
+    for(int h = y; h < y+height; h++){
+        for(int w = x; w < x+width; w++) {
             totalR += pixels[h][w].r;
             totalG += pixels[h][w].g;
             totalB += pixels[h][w].b;
@@ -198,8 +184,8 @@ int getDif(int x, int y, int height, int width, Img* pic, int mediaR, int mediaG
     int totalDif = 0;
     int total = height*width;
     RGB (*pixels)[pic->width] = (RGB(*)[pic->width]) pic->img;
-    for(int h=0; h < height; h++){
-        for(int w = 0; w < width; w++) {
+    for(int h = y; h < y+height; h++){
+        for(int w = x; w < x+width; w++) {
             totalDif += sqrt(pow(pixels[h][w].r - mediaR, 2) + pow(pixels[h][w].g - mediaG, 2) + pow(pixels[h][w].b - mediaB, 2));
         }
     }
