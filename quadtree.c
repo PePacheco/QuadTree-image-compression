@@ -11,7 +11,6 @@
 
 unsigned int first = 1;
 char desenhaBorda = 1;
-int c = 0;
 
 QuadNode* newNode(int x, int y, int width, int height)
 {
@@ -33,8 +32,6 @@ QuadNode* geraQuadtree(Img* pic, float minDetail)
 
     // Veja como acessar os primeiros 10 pixels da imagem, por exemplo:
     int i;
-    // for(i=0; i<10; i++)
-        // printf("%02X %02X %02X\n",pixels[0][i].r,pixels[1][i].g,pixels[2][i].b);
 
     int width = pic->width;
     int height = pic->height;
@@ -44,7 +41,7 @@ QuadNode* geraQuadtree(Img* pic, float minDetail)
     //////////////////////////////////////////////////////////////////////////
 
     QuadNode* raiz;
-    raiz = drawRecursiveNode(0, 0, width, height);
+    raiz = drawRecursiveNode(0, 0, width, height, pic, minDetail);
 
 // #define DEMO
 // #ifdef DEMO
@@ -52,14 +49,6 @@ QuadNode* geraQuadtree(Img* pic, float minDetail)
 //     /************************************************************/
 //     /* Teste: criando uma raiz e dois nodos a mais              */
 //     /************************************************************/
-//     int c = 1;
-//     QuadNode* raiz = newNode(0,0,width,height);
-//     raiz->status = PARCIAL;
-//     raiz->color[0] = 0;
-//     raiz->color[1] = 0;
-//     raiz->color[2] = 255;
-
-//     drawRecursiveNode(raiz, height, width, c);
 
 // #endif
     // Finalmente, retorna a raiz da árvore
@@ -154,27 +143,65 @@ void drawNode(QuadNode* n)
     // Nodos vazios não precisam ser desenhados... nem armazenados!
 }
 
-QuadNode* drawRecursiveNode(int x, int y, int h, int w)
+QuadNode* drawRecursiveNode(int x, int y, int h, int w, Img* pic, float minDetail)
 {
-    c++;
     QuadNode* node = newNode(x, y, w, h);
+    unsigned char difIntensity[4];
+    getDifMeanIntensity(x, y, h, w, pic, difIntensity);
+    //unsigned char* difIntensity = getDifMeanIntensity(x, y, h, w, pic);
+    printf("Intensidade media: %d\n", difIntensity[3]);
     // 1 - calcular cor media do bloco
     // 2 - calcular nivel de detalhe
-    if(c >= 100){ // 3 - se nivel de detalhe é menor do que o valor desejado
+    if(difIntensity[3] < minDetail){ // 3 - se nivel de detalhe é menor do que o valor desejado
         node->status = PARCIAL; // 3.1 - se sim, cria e devolve o nodo total, com a cor media do bloco
-        node->color[0] = 0;
-        node->color[1] = 0;
-        node->color[2] = 255;
+        node->color[0] = difIntensity[0];
+        node->color[1] = difIntensity[1];
+        node->color[2] = difIntensity[2];
         return node;
     }
     node->status = PARCIAL;// 3.2 - caso negativo, cria nodo parcial e preenche os 4 filhos dele com chamadas recursivas
-    node->color[0] = 0;
-    node->color[1] = 0;
-    node->color[2] = 255;
-    node->NE = drawRecursiveNode(x, y, h/2, w/2);
-    node->NW = drawRecursiveNode(w/2, y, h/2, w/2);
-    node->SE = drawRecursiveNode(x, h/2, h/2, w/2);
-    node->SW = drawRecursiveNode(w/2, h/2, h/2, w/2);
+    node->color[0] = difIntensity[0];
+    node->color[1] = difIntensity[1];
+    node->color[2] = difIntensity[2];
+    // node->NW = drawRecursiveNode(w/2, y, h/2, w/2, pic, minDetail);
+    // node->SE = drawRecursiveNode(x, h/2, h/2, w/2, pic, minDetail);
+    // node->SW = drawRecursiveNode(w/2, h/2, h/2, w/2, pic, minDetail);
+    node->NE = drawRecursiveNode(x, y, h/2, w/2, pic, minDetail);
     return node;
     
+}
+
+void getDifMeanIntensity(int x, int y, int height, int width, Img* pic, unsigned char* a) 
+{
+    int total = height*width;
+    int totalR = 0, totalG = 0, totalB = 0;
+    RGB (*pixels)[pic->width] = (RGB(*)[pic->width]) pic->img;
+    for(int h=0; h < height; h++){
+        for(int w = 0; w < width; w++) {
+            totalR += pixels[h][w].r;
+            totalG += pixels[h][w].g;
+            totalB += pixels[h][w].b;
+        }
+    }
+    int mediaR = totalR/total;
+    int mediaG = totalG/total;
+    int mediaB = totalB/total;
+    int dif = getDif(x, y, height, width, pic, mediaR, mediaG, mediaB);
+    a[0] = mediaR;
+    a[1] = mediaG;
+    a[2] = mediaB;
+    a[3] = dif;
+}
+
+int getDif(int x, int y, int height, int width, Img* pic, int mediaR, int mediaG, int mediaB)
+{
+    int totalDif = 0;
+    int total = height*width;
+    RGB (*pixels)[pic->width] = (RGB(*)[pic->width]) pic->img;
+    for(int h=0; h < height; h++){
+        for(int w = 0; w < width; w++) {
+            totalDif += sqrt(pow(pixels[h][w].r - mediaR, 2) + pow(pixels[h][w].g - mediaG, 2) + pow(pixels[h][w].b - mediaB, 2));
+        }
+    }
+    return totalDif/total;
 }

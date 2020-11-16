@@ -44,5 +44,7 @@ void drawNode(QuadNode* n);
 void writeTree(QuadNode* raiz);
 void writeNode(FILE* fp, QuadNode* n);
 void toggleBorder();
-QuadNode* drawRecursiveNode(int x, int y, int height, int width);
+QuadNode* drawRecursiveNode(int x, int y, int height, int width, Img* pic, float minDetail);
+void getDifMeanIntensity(int x, int y, int height, int width, Img* pic, unsigned char* a);
+int getDif(int x, int y, int height, int width, Img* pic, int mediaR, int mediaG, int mediaB);
 #endif // QUADTREE_H

@@ -26,7 +26,6 @@ void init();
 void draw();
 int getDetailLevel(Img* pic, int width, int height);
 void keyboard(unsigned char key, int x, int y);
-int getMeanIntensity(Img* pic, int currentIndex, int step);
 int resize(int width, int height);
 int width,height;   // largura e altura da janela
 GLuint tex; // mingw32-make -f Makefile.mk
@@ -163,39 +162,3 @@ void draw()
 
     glutSwapBuffers();
 }
-
-// int getDetailLevel(Img* pic, int height, int width)
-// {
-//     RGB* arrayRGB = pic->img;
-//     int index = 0;
-//     int c = 0;
-//     for (int i = 0, j = 0; i <= pic->width && j < pic->height;)
-//     {
-//         if(c >= pic->width) {
-//             c = 0;
-//             continue;
-//         }
-//         if(i == 0){
-
-//         }else if(j == 0){
-
-//         }
-//         if(i >= pic->width) {
-//             i = 0;
-//         }
-//     }
-// }
-
-// int getMeanIntensity(Img* pic, int currentIndex, int step){
-//     int total, n;
-//     total = 0;
-//     n = step * step;
-//     for(int j = 0; j < step; j++){
-//         for(int i = 0; i < step; i++)
-//         {
-//             total += getIntensity(pic->img[currentIndex + i]);
-//         }
-//         currentIndex += pic->width;
-//     }
-//     return total/n;
-// }
